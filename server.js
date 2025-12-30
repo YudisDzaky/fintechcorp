@@ -1,32 +1,29 @@
-const express=require('express');
-const app=express();
-const port= 8000;
+const express = require('express');
+const app = express();
+const port = 8000;
 
-const bodyParser=require('body-parser'); 
-
-
+const bodyParser = require('body-parser');
 
 app.use(express.static(__dirname));
 
-app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/Add New.html");
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/Add New.html');
 });
 
+app.use(bodyParser.urlencoded({ extended: false }));
+app.get('/submit', function (req, res) {
+  console.log('Data Saved');
+});
 
-app.use(bodyParser.urlencoded({extended: false}))
-app.get('/submit',function(req,res){
-  console.log("Data Saved");
-})
+const { Pool, Client } = require('pg');
+const connectionString =
+  'postgresql://postgres:1234@localhost:5432/fintechCorp';
 
-const {Pool,Client}= require('pg')
-const connectionString='postgresql://postgres:1234@localhost:5432/fintechCorp'
+const client = new Client({
+  connectionString: connectionString,
+});
 
-
-const client= new Client({
-    connectionString:connectionString
-})
-
-app.post("/", (req, res) => {
+app.post('/', (req, res) => {
   const { id, tipe, jumlah, tanggal, kategori, vendor, keterangan } = req.body;
 
   client.connect();
@@ -43,10 +40,9 @@ app.post("/", (req, res) => {
     }
   );
 
-  res.sendFile(__dirname + "/Add New.html");
+  res.sendFile(__dirname + '/Add New.html');
 });
 
-
-  app.listen(port, () => {
-    console.log(`Example app listening on port ${port}!`)
-  });
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}!`);
+});
